@@ -106,18 +106,19 @@ private:
 
 private:
     void TabulationTask5(){
-        float y;
+        float y, x;
         COORD cPos;
         HANDLE hCon;
         CONSOLE_SCREEN_BUFFER_INFO consoleCursorPos;
 
         hCon = GetStdHandle(STD_OUTPUT_HANDLE);
+        x = -4;
 
         cout << "y" << endl;
         cout << "x";
 
 
-        for (float x = -4; x <= 4; x+=0.5) {
+        while (x <= 4) {
             GetConsoleScreenBufferInfo(hCon, &consoleCursorPos);
             cPos.X = consoleCursorPos.dwCursorPosition.X;
             cPos.Y = consoleCursorPos.dwCursorPosition.Y;
@@ -129,8 +130,24 @@ private:
             cPos.Y += 1;
             SetConsoleCursorPosition(hCon, cPos);
             cout << x;
+            x += 0.5;
         }
         cout << endl;
+    }
+
+private:
+    void TabulationTask5Easy(){
+        float y, x;
+        x = -4;
+
+        cout << "y x" << endl;
+
+        while (x <= 4){
+            y = (float)(pow(x, 2) - 2*x + 2) / (x - 1);
+
+            cout << y << " " << x << endl;
+            x += 0.5;
+        }
     }
 
 private:
