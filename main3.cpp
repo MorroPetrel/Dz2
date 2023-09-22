@@ -5,7 +5,86 @@
 
 using namespace std;
 
+class Console{
+
+public:
+    bool isCorrectInput;
+
+    template <typename T>
+    T whileInput(){
+        T input;
+
+        do{
+            input = Input<T>();
+            if (!isCorrectInput)
+                cout << "Некорректный ввод, повторите еще раз: " << endl;
+        } while (!isCorrectInput);
+        return input;
+    }
+
+public:
+    template <typename T>
+    T Input(){
+        string stringInput;
+        cin >> stringInput;
+
+        T input;
+
+        if (stringInput.empty()){
+            isCorrectInput = false;
+            return input;
+        }
+
+        try{
+            if (typeid(T).operator==(typeid(int))){
+
+                for(char c : stringInput){
+                    if (isdigit(c) == 0){
+                        isCorrectInput = false;
+                        return input;
+                    }
+                }
+
+                input = stoi(stringInput);
+            } else if (typeid(T).operator==(typeid(float))){
+
+                bool hasOnePoint = false;
+                for(char c : stringInput){
+                    if (c == '.'){
+                        if (hasOnePoint){
+                            isCorrectInput = false;
+                            return input;
+                        } else {
+                            hasOnePoint = true;
+                            continue;
+                        }
+                    }
+                    if (isdigit(c) == 0){
+                        isCorrectInput = false;
+                        return input;
+                    }
+                }
+
+                input = stof(stringInput);
+            }
+        } catch(...) {
+            isCorrectInput = false;
+            return input;
+        }
+
+        isCorrectInput = true;
+        return input;
+    }
+};
+
 class Dz3{
+
+public:
+    Dz3(){
+        console = Console();
+    }
+
+    Console console;
 
 public:
     void ChooseTasks(){
@@ -23,11 +102,11 @@ private:
         float m, S, p;
 
         cout << "Введите S" << endl;
-        cin >> S;
+        S = console.whileInput<float>();
         cout << "Введите p" << endl;
-        cin >> p;
+        p = console.whileInput<float>();
         cout << "Введите n" << endl;
-        cin >> n;
+        n = console.whileInput<int>();
 
         float r = p / 100;
         float numerator = S * r * pow((1 + r), n);
@@ -122,8 +201,7 @@ private:
     int TakeTaskNumber(){
         cout << "Введите номер задания. Для завершения программы введите \"0\"." << endl;
 
-        int taskNumber;
-        cin >> taskNumber;
+        int taskNumber = console.whileInput<int>();
 
         return taskNumber;
     }
@@ -164,6 +242,7 @@ int main() {
 
     Dz3 Program = Dz3();
     Program.ChooseTasks();
+
 
     system("pause");
 }
