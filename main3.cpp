@@ -2,19 +2,21 @@
 #include <windows.h>
 #include <cmath>
 #include <fstream>
+#include <string>
+
 
 using namespace std;
 
-class Console{
+class Console {
 
 public:
     bool isCorrectInput;
 
     template <typename T>
-    T whileInput(){
+    T whileInput() {
         T input;
 
-        do{
+        do {
             input = Input<T>();
             if (!isCorrectInput)
                 cout << "Некорректный ввод, повторите еще раз: " << endl;
@@ -24,67 +26,72 @@ public:
 
 public:
     template <typename T>
-    T Input(){
+    T Input() {
         string stringInput;
         cin >> stringInput;
 
-        T input;
+        T input{};
 
-        if (stringInput.empty()){
+        if (stringInput.empty()) {
             isCorrectInput = false;
             return input;
         }
 
-        try{
+        try {
             bool firstMinus = false;
 
             if (stringInput[0] == '-')
                 firstMinus = true;
-            if (typeid(T).operator==(typeid(int)) || typeid(T).operator==(typeid(long))){
-                for(char c : stringInput){
-                    if (c == '-' && firstMinus){
+            if (typeid(T).operator==(typeid(int)) || typeid(T).operator==(typeid(long))) {
+                for (char c : stringInput) {
+                    if (c == '-' && firstMinus) {
                         firstMinus = false;
                         continue;
                     }
-                    if (isdigit(c) == 0){
+                    if (isdigit(c) == 0) {
                         isCorrectInput = false;
                         return input;
                     }
                 }
                 if (typeid(T).operator==(typeid(int))) {
                     input = stoi(stringInput);
-                } else {
+                }
+                else {
                     input = stol(stringInput);
                 }
-            } else if (typeid(T).operator==(typeid(float)) || typeid(T).operator==(typeid(double))){
+            }
+            else if (typeid(T).operator==(typeid(float)) || typeid(T).operator==(typeid(double))) {
 
                 bool hasOnePoint = false;
-                for(char c : stringInput){
-                    if (c == '-' && firstMinus){
+                for (char c : stringInput) {
+                    if (c == '-' && firstMinus) {
                         firstMinus = false;
                         continue;
                     }
-                    if (c == '.'){
-                        if (hasOnePoint){
+                    if (c == '.') {
+                        if (hasOnePoint) {
                             isCorrectInput = false;
                             return input;
-                        } else {
+                        }
+                        else {
                             hasOnePoint = true;
                             continue;
                         }
                     }
-                    if (isdigit(c) == 0){
+                    if (isdigit(c) == 0) {
                         isCorrectInput = false;
                         return input;
                     }
                 }
                 if (typeid(T).operator==(typeid(float))) {
                     input = stof(stringInput);
-                } else {
+                }
+                else {
                     input = stod(stringInput);
                 }
             }
-        } catch(...) {
+        }
+        catch (...) {
             isCorrectInput = false;
             return input;
         }
@@ -94,23 +101,23 @@ public:
     }
 };
 
-class Dz3{
+class Dz3 {
 
 private:
     Console console = Console();
 
 public:
-    void ChooseTasks(){
+    void ChooseTasks() {
         int taskNumber = TakeTaskNumber();
 
-        while (taskNumber != 0){
+        while (taskNumber != 0) {
             StartChosenTask(taskNumber);
             taskNumber = TakeTaskNumber();
         }
     }
 
 private:
-    void LoanTask1(){
+    void LoanTask1() {
         long n;
         double m, S, p;
 
@@ -123,11 +130,16 @@ private:
 
         double r = p / 100;
         double numerator = S * r * pow((1 + r), n);
-        double denominator = 12 * (pow((1+r), n) - 1);
+        double denominator = 12 * (pow((1 + r), n) - 1);
 
-        m = numerator / denominator;
+        if (p == 0) {
+            m = S / 12 / n;
+        }
+        else {
+            m = numerator / denominator;
+        }
 
-        if (m <= 0 || isnan(m) || isinf(m)){
+        if (m <= 0 || isnan(m) || isinf(m)) {
             cout << "Некорректные данные" << endl;
             LoanTask1();
             return;
@@ -137,7 +149,7 @@ private:
     }
 
 private:
-    void LoanTask2(){
+    void LoanTask2() {
         long n;
         double m, iterableM, S, r, eps, numerator, denominator;
 
@@ -148,20 +160,25 @@ private:
         cout << "Введите n" << endl;
         n = console.whileInput<long>();
 
-        eps = 0.1;
-        double step = 0.001;
+        eps = 0.0001;
+        double step = 10;
         double p = 1.0;
-        while (p < 100){
+        while (p < 100) {
             r = (double)p / 100;
             numerator = S * r * pow((1 + r), n);
-            denominator = 12 * (pow((1+r), n) - 1);
+            denominator = 12 * (pow((1 + r), n) - 1);
 
             iterableM = numerator / denominator;
-            if (abs(iterableM-m) < eps){
+            if (abs(iterableM - m) < eps) {
                 cout << "Процент p = " << p << endl;
                 return;
             }
+            if (iterableM > m) {
+                p -= step;
+                step = step / 10;
+            }
             p += step;
+
         }
 
         cout << "Некорректные данные" << endl;
@@ -170,7 +187,7 @@ private:
 
 
 private:
-    void CopyingFilesTask3(){
+    void CopyingFilesTask3() {
         char choice;
         cout << "Записать дефолтный текст (d) или записать из консоли(w)?" << endl;
         cin >> choice;
@@ -178,25 +195,28 @@ private:
         string res;
         string input;
 
-        if (choice == 'd'){
+        if (choice == 'd') {
             res = "Работа с файлами \nв с++";
-        } else if (choice == 'w') {
+        }
+        else if (choice == 'w') {
             cout << "Чтобы завершить ввод в отдельной строке напишите \"AIWPRTON\"" << endl;
             getline(cin, input);
-            while (input != "AIWPRTON"){
+            while (input != "AIWPRTON") {
                 res += input + "\n";
                 getline(cin, input);
             }
-        } else {
+        }
+        else {
             cout << "Некорректная команда" << endl;
             CopyingFilesTask3();
             return;
         }
 
         ofstream fout("cppstudio.txt");
-        if (fout.is_open()){
+        if (fout.is_open()) {
             fout << res;
-        } else {
+        }
+        else {
             cout << "Ошибка создания файла";
             CopyingFilesTask3();
             return;
@@ -207,23 +227,25 @@ private:
         cin >> choice;
 
         ifstream fin("cppstudio.txt");
-        if (!fin.is_open()){
+        if (!fin.is_open()) {
             cout << "Ошибка чтения файла" << endl;
             CopyingFilesTask3();
             return;
         }
-        if (choice == 'A'){
+        if (choice == 'A') {
             string result;
             string buff;
-            while (getline(fin, buff)){
+            while (getline(fin, buff)) {
                 result += buff + "\n";
             }
             cout << result;
-        } else if (choice == 'F') {
+        }
+        else if (choice == 'F') {
             char buff[40];
             fin.getline(buff, 40);
             cout << buff << endl;
-        } else {
+        }
+        else {
             cout << "Некорректная команда" << endl;
             fin.close();
             CopyingFilesTask3();
@@ -234,31 +256,34 @@ private:
     }
 
 private:
-    void FilterTask4(){
+    void FilterTask4() {
         string path;
-        int buffSize = 50;
+        const int buffSize = 50;
         char buff[buffSize];
-        bool lastCharIsDigit;
+        bool lastCharIsDigit{};
 
         cout << "Введите путь до файла: " << endl;
         cin >> path;
 
         ifstream fin(path);
-        if (!fin.is_open()){
+        if (!fin.is_open()) {
             cout << "Некорректный файл";
-        } else {
+        }
+        else {
             fin.read(buff, buffSize);
             int intChar;
-            for(char c : buff){
+            for (char c : buff) {
                 intChar = static_cast<int>(c);
-                if (48 <= intChar && intChar <= 57){
+                if (48 <= intChar && intChar <= 57) {
                     cout << c;
                     lastCharIsDigit = true;
-                } else {
-                    if (lastCharIsDigit){
+                }
+                else {
+                    if (lastCharIsDigit) {
                         cout << " ";
                         lastCharIsDigit = false;
-                    } else {
+                    }
+                    else {
                         continue;
                     }
                 }
@@ -271,7 +296,8 @@ private:
 private:
     void LetterSortingTask5() {
         string choose, path;
-        char buff[30];
+        const int buffsize = 30;
+        char buff[buffsize];
 
         cout << "Считать значения из консоли(c) или файла(f)?" << endl;
         cin >> choose;
@@ -286,40 +312,64 @@ private:
                 fin.close();
                 LetterSortingTask5();
                 return;
-            } else {
-                fin.read(buff, 30);
+            }
+            else {
+                fin.read(buff, buffsize);
                 fin.close();
             }
-        } else if (choose == "c") {
+        }
+        else if (choose == "c") {
             cout << "Введите строку(лишние символы обрежутся): " << endl;
             string input;
             cin >> input;
-            if (input.length() < 30){
-                cout << "Должно быть не менее 30 символов" << endl;
+            if (input.length() < buffsize) {
+                cout << "Должно быть не менее " << buffsize << " символов" << endl;
                 LetterSortingTask5();
                 return;
             }
             int i = 0;
-            for (char c: input){
+            for (char c : input) {
                 buff[i] = c;
                 i++;
-                if (i == 30)
+                if (i == buffsize)
                     break;
             }
-        } else {
+        }
+        else {
             LetterSortingTask5();
             return;
         }
 
-        for (int i = 1; i < 30; i++)
-            for (int j = i; j > 0 && buff[j - 1] > buff[j]; j--)
-                swap(buff[j - 1], buff[j]);
-
-        cout << "Отсортированная строка: " << buff << endl;
+        for (int i = 1; i < buffsize; i++)
+            for (int j = i; j > 0; j--) {
+                if (65 <= buff[j - 1] && buff[j - 1] <= 90) {
+                    if (65 <= buff[j] && buff[j] <= 90) {
+                        if (buff[j-1] > buff[j])
+                            swap(buff[j - 1], buff[j]);
+                    }
+                    else {
+                        if (buff[j-1] > buff[j]-32)
+                            swap(buff[j - 1], buff[j]);
+                    }
+                }
+                else {
+                    if (65 <= buff[j] && buff[j] <= 90) {
+                        if (buff[j - 1]-32 >= buff[j])
+                            swap(buff[j - 1], buff[j]);
+                    }
+                    else {
+                        if (buff[j - 1] > buff[j])
+                            swap(buff[j - 1], buff[j]);
+                    }
+                }
+            }
+        for (char c : buff)
+            cout << c;
+        cout << endl;
     }
 
 private:
-    int TakeTaskNumber(){
+    int TakeTaskNumber() {
         cout << "Введите номер задания. Для завершения программы введите \"0\"." << endl;
 
         int taskNumber = console.whileInput<int>();
@@ -328,28 +378,28 @@ private:
     }
 
 private:
-    void StartChosenTask(int taskNumber){
+    void StartChosenTask(int taskNumber) {
 
         switch (taskNumber)
         {
-            case 1:
-                LoanTask1();
-                break;
-            case 2:
-                LoanTask2();
-                break;
-            case 3:
-                CopyingFilesTask3();
-                break;
-            case 4:
-                FilterTask4();
-                break;
-            case 5:
-                LetterSortingTask5();
-                break;
-            default:
-                cout << "Задание под номером " << taskNumber << " не найдено" << endl;
-                break;
+        case 1:
+            LoanTask1();
+            break;
+        case 2:
+            LoanTask2();
+            break;
+        case 3:
+            CopyingFilesTask3();
+            break;
+        case 4:
+            FilterTask4();
+            break;
+        case 5:
+            LetterSortingTask5();
+            break;
+        default:
+            cout << "Задание под номером " << taskNumber << " не найдено" << endl;
+            break;
         }
     }
 
@@ -359,8 +409,8 @@ private:
 
 
 int main() {
-    SetConsoleCP(CP_UTF8);
-    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(1251);
+    SetConsoleOutputCP(1251);
 
     Dz3 Program = Dz3();
     Program.ChooseTasks();
