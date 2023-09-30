@@ -1,5 +1,5 @@
 #include <iostream>
-#include <Windows.h>
+#include <windows.h>
 #include <cmath>
 using namespace std;
 
@@ -25,15 +25,15 @@ private:
         cin >> r;
         cout << "Введите h" << endl;
         cin >> h;
-        cout << "Введите l" << endl;
-        cin >> l;
+//        cout << "Введите l" << endl;
+//        cin >> l;
 
-        while (h >= l){
-            cout << "h не может быть больше или равна l." << endl;
-            cout << "Введите h" << endl;
-            cin >> h;
-            cout << "Введите l" << endl;
-            cin >> l;
+        l = sqrt(pow(R-r, 2) + pow(h, 2));
+
+        if (l <= 0 || h <= 0 || r <= 0 || R <= 0 || (h >= l)){
+            cout << "Усеченного конуса при данных значениях не существует" << endl;
+            ConeTask1();
+            return;
         }
 
         V = 1.0f/3*M_PI*h*(pow(R, 2) + R*r + pow(r, 2));
@@ -41,6 +41,7 @@ private:
 
         cout << "Объем V = " << V << endl;
         cout << "Полная поверхность S = " << S << endl;
+        cout << "Образующая l = " << l << endl;
     }
 
 private:
@@ -56,6 +57,10 @@ private:
 
         if (x < 1){
             w = a * log(x);
+            if (x <= 0){
+                cout << "Нет корней"<< endl;
+                return;
+            }
             cout << "w = " << w << endl;
         }else{
             float f = a - pow(x, 2);
@@ -96,11 +101,16 @@ private:
         cout << "Введите N" << endl;
         cin >> N;
 
-        count = 10;
+        if (N <= 0){
+            cout << "Не натуральное число" << endl;
+            OrderTask4();
+            return;
+        }
 
-        for (int i = 0; i < count; ++i){
-            N++;
-            cout << N << endl;
+        count = 9;
+
+        for (int i = N; i <= N + count; i++){
+            cout << i << endl;
         }
     }
 
@@ -126,10 +136,14 @@ private:
             y = (float)(pow(x, 2) - 2*x + 2) / (x - 1);
             cPos.X += 7;
             SetConsoleCursorPosition(hCon, cPos);
-            cout << y;
+            if (x == 1){
+                cout << "|Div by 0";
+            } else {
+                cout << "|" << y;
+            }
             cPos.Y += 1;
             SetConsoleCursorPosition(hCon, cPos);
-            cout << x;
+            cout << "|" << x;
             x += 0.5;
         }
         cout << endl;
@@ -144,8 +158,12 @@ private:
 
         while (x <= 4){
             y = (float)(pow(x, 2) - 2*x + 2) / (x - 1);
-
-            cout << y << " " << x << endl;
+            if (x == 1){
+                cout << "Div by 0";
+            } else {
+                cout << y;
+            }
+            cout << " | " << x << endl;
             x += 0.5;
         }
     }
@@ -179,6 +197,9 @@ private:
                 break;
             case 5:
                 TabulationTask5();
+                break;
+            case 50:
+                TabulationTask5Easy();
                 break;
             default:
                 break;
